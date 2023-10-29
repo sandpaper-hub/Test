@@ -1,9 +1,67 @@
 package com.practicum.test.src
 
+import java.util.Scanner
 import kotlin.random.Random
 
+class Game {
+    companion object {
+        val input = Scanner(System.`in`)
+    }
+    fun start() {
+        // поздоровайтесь с пользователем - выведите в лог "Привет, поиграем в лото?"
+        makeLogMessage(LogMessage.HELLO)
+        // создайте объект Lotto, для запуска
+        val lotto = Lotto()
+        // спросите у пользователя имя нового игрока "Введите имя нового игрока" и добавьте его в объект Lotto. Используйте input.nextLine() для считывания с консоли.
+        createPlayer(lotto)
+        // после добавление спросите у пользователя, хочет ли он добавить ещё одного пользователя "Если хотите добавить ещё игрока - введите любой символ, если хотите начать игру введите 'Нет'". Используйте input.nextLine() для считывания с консоли.
+        createMorePlayer(lotto)
+        // если пользователь введёт "Нет" - завершить добавление пользователей и запустить игру Lotto.start(), иначе добавить ещё одного пользователя. Добавление пользователей может быть бесконечным, если пользователь никогда не введёт "Нет"
+    }
+
+    private fun makeLogMessage(logMessage: LogMessage) {
+        when (logMessage) {
+            LogMessage.HELLO -> println(LogMessage.HELLO)
+            LogMessage.INPUT_NEW_PLAYER -> println(LogMessage.INPUT_NEW_PLAYER)
+            LogMessage.INPUT_MORE_PLAYER -> println(LogMessage.INPUT_MORE_PLAYER)
+        }
+
+    }
+
+    private fun createPlayer(lotto: Lotto) {
+        makeLogMessage(LogMessage.INPUT_NEW_PLAYER)
+        val name = input.nextLine()
+        lotto.addPerson(Person((name)))
+    }
+
+    private fun createMorePlayer(lotto: Lotto) {
+        var isContinueAdding = true
+        while (isContinueAdding) {
+            makeLogMessage(LogMessage.INPUT_MORE_PLAYER)
+            val inputResult = input.nextLine()
+            if (inputResult.lowercase() == "нет") {
+                isContinueAdding = false
+                lotto.start()
+            } else {
+                createPlayer(lotto)
+            }
+        }
+    }
+}
+
+enum class LogMessage(private val message: String) {
+    HELLO("Привет, поиграем в лото?"),
+    INPUT_NEW_PLAYER("Введите имя нового игрока"),
+    INPUT_MORE_PLAYER("Если хотите добавить ещё игрока - введите любой символ, если хотите начать игру введите 'Нет'");
+
+
+    override fun toString(): String {
+        return message
+    }
+}
+
 class Lotto {
-    private val playerList = ArrayList<Person>() // определите поле, в котором будут храниться добавленные игроки `Person`
+    val playerList = ArrayList<Person>() // определите поле, в котором будут храниться добавленные игроки `Person`
     private var haveWinner = false
 
     // поле thrownNumbers должно хранить в себе набор выброшенных чисел.
@@ -120,18 +178,8 @@ class Person(val name: String) {
 }
 
 fun main() {
-    val alex = Person("Alex")
-    val sam = Person("Sam")
-    val jim = Person("Jim")
-    println(alex.card.numbers)
-    println(sam.card.numbers)
-    println(jim.card.numbers)
-    val lotto = Lotto()
-    lotto.addPerson(alex)
-    lotto.addPerson(jim)
-    lotto.addPerson(sam)
-
-    lotto.start()
+    val game = Game()
+    game.start()
 }
 
 
